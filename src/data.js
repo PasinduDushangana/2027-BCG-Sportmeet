@@ -1,6 +1,7 @@
 export const houses = [
   {
     id: "parakrama",
+    neon: "#f6ff3b",
     name: "Parakrama",
     color: "#f2c94c",
     pale: "#fff3d8",
@@ -8,6 +9,7 @@ export const houses = [
   },
   {
     id: "gemunu",
+    neon: "#42ffb0",
     name: "Gemunu",
     color: "#22a875",
     pale: "#e3f5eb",
@@ -15,6 +17,7 @@ export const houses = [
   },
   {
     id: "thissa",
+    neon: "#ff4f58",
     name: "Thissa",
     color: "#ed5355",
     pale: "#ffece9",
@@ -22,6 +25,7 @@ export const houses = [
   },
   {
     id: "vijaya",
+    neon: "#55aaff",
     name: "Vijaya",
     color: "#4d8ef7",
     pale: "#e7f0fd",

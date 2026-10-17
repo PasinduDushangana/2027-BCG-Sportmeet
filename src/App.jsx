@@ -49,6 +49,8 @@ import {
   initialEvents,
 } from "./data";
 
+import { AnimatedScore, MotionEffects } from "./visuals";
+
 const STORE_KEY = "bcg-sportmeet-2027-v1";
 const cleanResult = (result) => ({
   houseId: houses.some((h) => h.id === result.houseId)
@@ -119,7 +121,7 @@ function Brand() {
     </Link>
   );
 }
-function Header({ onSearch }) {
+function Header({ onSearch, leader }) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   function submit(e) {
@@ -136,7 +138,8 @@ function Header({ onSearch }) {
             <MapPin size={12} /> GAMPAHA, SRI LANKA
           </span>
           <span className="utility-motto">
-            ONE COLLEGE. FOUR HOUSES. ONE LEGACY.
+            <i className="theme-status-dot" /> {leader.name.toUpperCase()} SETS
+            THE PACE · {leader.points} PTS
           </span>
           <span
             className="house-colours"
@@ -296,7 +299,7 @@ function PointsBar({ standing, max, rank }) {
         />
       </div>
       <strong className="points-number">
-        {standing.points}
+        <AnimatedScore value={standing.points} />
         <small> pts</small>
       </strong>
     </div>
@@ -326,6 +329,7 @@ function Home({ events, standings }) {
           alt="Sprinter preparing at the start line on a sunlit athletics track"
           fetchPriority="high"
         />
+        <div className="hero-atmosphere" aria-hidden="true" />
         <div className="hero-shade" />
         <div className="container hero-grid">
           <div className="hero-content">
@@ -363,7 +367,7 @@ function Home({ events, standings }) {
                 <HouseCrest house={leader} />
                 <strong>{leader.name}</strong>
                 <span>
-                  {leader.points}
+                  <AnimatedScore value={leader.points} />
                   <small>PTS</small>
                 </span>
               </div>
@@ -403,7 +407,7 @@ function Home({ events, standings }) {
                 </small>
               </div>
               <strong>
-                {house.points}
+                <AnimatedScore value={house.points} />
                 <small>PTS</small>
               </strong>
             </Link>
@@ -672,7 +676,7 @@ function Podium({ standings }) {
               <HouseCrest house={house} size={30} />
               <strong>{house.name}</strong>
               <span className="podium-score">
-                {house.points}
+                <AnimatedScore value={house.points} />
                 <small>PTS</small>
               </span>
             </div>
@@ -765,7 +769,7 @@ function Standings({ events, standings }) {
                 <span>{s.eventPoints}</span>
                 <span>{s.otherPoints}</span>
                 <strong>
-                  {s.points}
+                  <AnimatedScore value={s.points} />
                   <small> pts</small>
                 </strong>
               </div>
@@ -1609,8 +1613,13 @@ export default function App() {
     navigate("/");
   }
   return (
-    <div className="app">
-      <Header onSearch={search} />
+    <div
+      className="app neon-theme"
+      data-leading-house={standings[0].id}
+      style={{ "--accent": standings[0].neon }}
+    >
+      <MotionEffects />
+      <Header onSearch={search} leader={standings[0]} />
       <main>
         <Routes>
           <Route
