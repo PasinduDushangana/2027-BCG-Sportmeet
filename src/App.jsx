@@ -1,3 +1,5 @@
+import LoadingScreen from './LoadingScreen';
+import RaceFocus from './RaceFocus';
 import ChampionshipHero, { HouseResultCards } from './ChampionshipHero';
 import ArenaEffects from './ArenaEffects';
 import { useEffect, useMemo, useState } from "react";
@@ -325,6 +327,7 @@ function Home({ events, standings, isSample }) {
   return (
     <>
       <ChampionshipHero events={events} standings={standings}/>
+      <RaceFocus standings={standings} events={events}/>
       <div className="score-ribbon">
         <div className="container">
           {standings.map((house, i) => (
@@ -1496,6 +1499,7 @@ export default function App() {
   useEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, [location.pathname]);
   const navigate = useNavigate();
   const {published,syncError,loading,refresh} = useScoreboard();
+  const [entered,setEntered] = useState(false);
   const [draft,setDraft] = useState(loadData);
   const [unlocked,setUnlocked] = useState(() => sessionStorage.getItem("bcg-editor-unlocked") === "yes");
   const editorOpen = location.pathname === '/editor' && unlocked;
@@ -1528,6 +1532,8 @@ export default function App() {
     onLoadPublished:async()=>{const latest=await refresh();if(latest)saveDraft({...latest,baseRevision:latest.revision})},
   };
   return <div className="app neon-theme" data-leading-house={standings[0].id} style={{'--accent':standings[0].neon}}>
+    {!entered&&<LoadingScreen loading={loading} onComplete={()=>setEntered(true)}/>}
+    <div className="meet-experience" inert={!entered}>
     <ArenaEffects/><MotionEffects/><Header onSearch={search} leader={standings[0]}/>
     {!editorOpen&&<div className="public-sync container"><span><i className={syncError?'sync-dot offline':'sync-dot'}/>{loading?'CONNECTING TO THE SCOREBOARD':syncError?'OFFLINE · LAST AVAILABLE SCORES':published.isSample?'PREVIEW SCOREBOARD':'SHARED SCOREBOARD'}</span><span>{published.publishedAt?`Updated ${new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Colombo'}).format(new Date(published.publishedAt))} · Sri Lanka time`:'New scores appear here after publishing'}{syncError&&<button onClick={refresh}>Refresh</button>}</span></div>}
     <main><Routes>
@@ -1537,6 +1543,6 @@ export default function App() {
       <Route path="/results" element={<Results events={events} isSample={published.isSample}/>}/>
       <Route path="/editor" element={unlocked?<Editor events={events} setEvents={setEvents} adjustments={adjustments} setAdjustments={setAdjustments} onLock={lock} publishing={publishing}/>:<Navigate to="/" replace/>}/>
       <Route path="*" element={<Navigate to="/" replace/>}/>
-    </Routes></main><Footer/>
+    </Routes></main><Footer/></div>
   </div>;
 }

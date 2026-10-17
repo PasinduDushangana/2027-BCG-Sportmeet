@@ -41,3 +41,9 @@ The stadium presentation includes house-colour particles, orbital lights, title 
 ## Championship layout
 
 The supplied HouseScore reference screenshots inform the charcoal surfaces, wide typography, animated trophy hero, pride marquee, score highlights, quick links, spacious podium, and four-house result comparisons. House colours retain the college mapping (yellow, green, red, blue). Result cards aggregate each house’s points per event; athlete positions remain available in expandable details. All cards read the existing published scoreboard.
+
+## Entrance and house spotlight
+
+A starting-line loading screen appears on a full page load, uses the real scoreboard connection state, and offers an immediate Enter button or Escape shortcut. It exits when data is ready after a brief entrance, or after four seconds if the connection is slow; score fetching continues in the background. Reduced-motion visitors skip the animated entrance. Background controls are inert while the screen is visible, and scrolling is restored on exit.
+
+The interactive house spotlight shows the selected house’s total points, first-place finishes in completed events, rank, and gap to the current leader. Choosing a house changes only that spotlight; the overall neon theme still follows the leading house.
