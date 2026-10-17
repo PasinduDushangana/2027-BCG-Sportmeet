@@ -1,3 +1,4 @@
+import ChampionshipHero, { HouseResultCards } from './ChampionshipHero';
 import ArenaEffects from './ArenaEffects';
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -323,71 +324,7 @@ function Home({ events, standings, isSample }) {
   const leader = standings[0];
   return (
     <>
-      <section className="hero">
-        <img
-          className="hero-photo"
-          src={`${import.meta.env.BASE_URL}images/championship-sprint.png`}
-          alt="Sprinter preparing at the start line on a sunlit athletics track"
-          fetchPriority="high"
-        />
-        <div className="hero-atmosphere" aria-hidden="true" /><div className="arena-orbits" aria-hidden="true"><i/><i/><i/></div>
-        <div className="hero-shade" />
-        <div className="container hero-grid">
-          <div className="hero-content">
-            <Eyebrow light>INTER-HOUSE SPORTS MEET / 2027</Eyebrow>
-            <h1>
-              ONE COLLEGE.
-              <br />
-              FOUR HOUSES.
-              <br />
-              <em>ALL HEART.</em>
-            </h1>
-            <p>
-              For the colours we carry.
-              <br />
-              For the legacy we leave behind.
-            </p>
-            <div className="hero-actions">
-              <Link className="button button-lime" to="/standings">
-                THE HOUSE STANDINGS <ArrowUpRight size={19} />
-              </Link>
-              <Link className="hero-secondary" to="/events">
-                Explore the events <ArrowRight size={17} />
-              </Link>
-            </div>
-          </div>
-          <div className="hero-side">
-            <span className="vertical-label">
-              BANDARANAYAKE COLLEGE — GAMPAHA
-            </span>
-            <div className="hero-champion"><div className="champion-signal" aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/></div>
-              <span className="hero-champion-label">
-                <Trophy size={14} /> CURRENT LEADER
-              </span>
-              <div>
-                <HouseCrest house={leader} />
-                <strong>{leader.name}</strong>
-                <span>
-                  <AnimatedScore value={leader.points} />
-                  <small>PTS</small>
-                </span>
-              </div>
-              <Link to="/standings">
-                The competition is just getting started{" "}
-                <ArrowUpRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </div>
-        <div className="container hero-bottom">
-          <span>
-            <Flag size={15} /> THE ANNUAL ATHLETIC CELEBRATION
-          </span>
-          <span>
-            SCROLL TO EXPLORE <ArrowDownRight size={16} />
-          </span>
-        </div>
-      </section>
+      <ChampionshipHero events={events} standings={standings}/>
       <div className="score-ribbon">
         <div className="container">
           {standings.map((house, i) => (
@@ -421,9 +358,7 @@ function Home({ events, standings, isSample }) {
             eyebrow="THE CHAMPIONSHIP RACE"
             title={
               <>
-                EVERY POINT.
-                <br />
-                <em>EVERY POSSIBILITY.</em>
+                The podium<em>.</em>
               </>
             }
             link="Explore full standings"
@@ -993,7 +928,7 @@ function Results({ events, isSample }) {
                   <Status value={event.status} />
                 </div>
                 {event.results.length ? (
-                  <div className="result-rows">
+                  <><HouseResultCards event={event}/><details className="athlete-details"><summary>Athletes & finishing positions</summary><div className="result-rows">
                     {[...event.results]
                       .sort((a, b) => a.place - b.place)
                       .map((result, i) => (
@@ -1013,7 +948,7 @@ function Results({ events, isSample }) {
                           </strong>
                         </div>
                       ))}
-                  </div>
+                  </div></details></>
                 ) : (
                   <div className="awaiting-results">
                     <CircleHelp size={19} />

@@ -15,6 +15,7 @@ import "./styles.css";
 import "./neon.css";
 import "./refinements.css";
 import "./arena.css";
+import "./championship.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

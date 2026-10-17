@@ -37,3 +37,7 @@ All primary surfaces have rounded corners, with responsive layouts, house-colour
 ## Motion controls
 
 The stadium presentation includes house-colour particles, orbital lights, title highlights, leader indicators, podium float, animated score bars, card hover effects, and route entrances. A floating Motion button saves the visitor’s pause preference. Reduced-motion settings disable decorative movement, and particles stop rendering while the tab is hidden.
+
+## Championship layout
+
+The supplied HouseScore reference screenshots inform the charcoal surfaces, wide typography, animated trophy hero, pride marquee, score highlights, quick links, spacious podium, and four-house result comparisons. House colours retain the college mapping (yellow, green, red, blue). Result cards aggregate each house’s points per event; athlete positions remain available in expandable details. All cards read the existing published scoreboard.
