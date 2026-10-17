@@ -1,3 +1,4 @@
+import ArenaEffects from './ArenaEffects';
 import { useEffect, useMemo, useState } from "react";
 import {
   Link,
@@ -329,7 +330,7 @@ function Home({ events, standings, isSample }) {
           alt="Sprinter preparing at the start line on a sunlit athletics track"
           fetchPriority="high"
         />
-        <div className="hero-atmosphere" aria-hidden="true" />
+        <div className="hero-atmosphere" aria-hidden="true" /><div className="arena-orbits" aria-hidden="true"><i/><i/><i/></div>
         <div className="hero-shade" />
         <div className="container hero-grid">
           <div className="hero-content">
@@ -359,7 +360,7 @@ function Home({ events, standings, isSample }) {
             <span className="vertical-label">
               BANDARANAYAKE COLLEGE — GAMPAHA
             </span>
-            <div className="hero-champion">
+            <div className="hero-champion"><div className="champion-signal" aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/></div>
               <span className="hero-champion-label">
                 <Trophy size={14} /> CURRENT LEADER
               </span>
@@ -1592,7 +1593,7 @@ export default function App() {
     onLoadPublished:async()=>{const latest=await refresh();if(latest)saveDraft({...latest,baseRevision:latest.revision})},
   };
   return <div className="app neon-theme" data-leading-house={standings[0].id} style={{'--accent':standings[0].neon}}>
-    <MotionEffects/><Header onSearch={search} leader={standings[0]}/>
+    <ArenaEffects/><MotionEffects/><Header onSearch={search} leader={standings[0]}/>
     {!editorOpen&&<div className="public-sync container"><span><i className={syncError?'sync-dot offline':'sync-dot'}/>{loading?'CONNECTING TO THE SCOREBOARD':syncError?'OFFLINE · LAST AVAILABLE SCORES':published.isSample?'PREVIEW SCOREBOARD':'SHARED SCOREBOARD'}</span><span>{published.publishedAt?`Updated ${new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Colombo'}).format(new Date(published.publishedAt))} · Sri Lanka time`:'New scores appear here after publishing'}{syncError&&<button onClick={refresh}>Refresh</button>}</span></div>}
     <main><Routes>
       <Route path="/" element={<Home events={events} standings={standings} isSample={published.isSample}/>}/>

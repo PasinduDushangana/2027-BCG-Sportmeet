@@ -33,3 +33,7 @@ The token is sent only to GitHub, held in memory, and cleared on successful publ
 Publishing commits the score file to `main`, triggering the existing Pages workflow. Revision and file SHA checks prevent overwriting another editor's newer publication. If a conflict occurs, back up your draft, load published scores, and reapply your changes. Public pages always use published scores, including when viewed from the editor's browser.
 
 All primary surfaces have rounded corners, with responsive layouts, house-colour neon accents, and reduced-motion support.
+
+## Motion controls
+
+The stadium presentation includes house-colour particles, orbital lights, title highlights, leader indicators, podium float, animated score bars, card hover effects, and route entrances. A floating Motion button saves the visitor’s pause preference. Reduced-motion settings disable decorative movement, and particles stop rendering while the tab is hidden.

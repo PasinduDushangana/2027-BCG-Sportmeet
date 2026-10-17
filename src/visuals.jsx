@@ -14,7 +14,7 @@ export function AnimatedScore({ value }) {
       previous.current = value;
       setShown(value);
     };
-    if (preference.matches) {
+    if (preference.matches || document.documentElement.dataset.motion === "paused") {
       finish();
       return;
     }
@@ -42,10 +42,12 @@ export function AnimatedScore({ value }) {
     );
     observer.observe(element.current);
     preference.addEventListener("change", finish);
+    window.addEventListener("bcg-motion-change", finish);
     return () => {
       observer.disconnect();
       cancelAnimationFrame(frame);
       preference.removeEventListener("change", finish);
+      window.removeEventListener("bcg-motion-change", finish);
     };
   }, [value]);
   return (

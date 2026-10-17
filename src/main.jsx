@@ -14,6 +14,7 @@ import "@fontsource/barlow-condensed/latin-800.css";
 import "./styles.css";
 import "./neon.css";
 import "./refinements.css";
+import "./arena.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

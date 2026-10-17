@@ -1,0 +1,29 @@
+/* Ambient stadium motion stays behind the interactive scoreboard. */
+.arena-particles{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.motion-toggle{position:fixed;bottom:18px;right:18px;z-index:40;display:flex;align-items:center;gap:8px;padding:11px 15px;border-radius:999px;border:1px solid #ffffff26;background:#0c121de8;backdrop-filter:blur(18px);color:#c8d4e4;font:600 10px 'DM Sans',sans-serif;box-shadow:0 6px 24px #0005;cursor:pointer}
+.motion-toggle:hover,.motion-toggle:focus-visible{border-color:var(--accent);color:var(--accent)}
+.hero{isolation:isolate}.arena-orbits{position:absolute;right:-180px;top:-150px;width:780px;height:780px;pointer-events:none;z-index:1;opacity:.24;mask-image:linear-gradient(110deg,transparent,#000)}
+.arena-orbits i{position:absolute;inset:0;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:50%;animation:arena-orbit 35s linear infinite}
+.arena-orbits i:after{content:'';position:absolute;top:14%;left:14%;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 22px var(--accent)}
+.arena-orbits i:nth-child(2){inset:70px;animation-duration:26s;animation-direction:reverse}.arena-orbits i:nth-child(3){inset:140px;animation-duration:45s}
+.hero-grid,.hero-bottom{position:relative;z-index:2}.hero h1 em{background:linear-gradient(105deg,var(--accent) 25%,#fff 48%,var(--accent) 66%);background-size:250% 100%;background-clip:text;-webkit-background-clip:text;color:transparent;animation:title-glint 9s ease-in-out infinite}
+.hero-champion{position:relative;overflow:hidden;backdrop-filter:blur(24px);background:linear-gradient(140deg,#121c29ec,#060b13eb);box-shadow:0 18px 65px #0006,0 0 45px color-mix(in srgb,var(--accent) 7%,transparent)}
+.champion-signal{position:absolute;right:22px;top:20px;display:flex;align-items:end;gap:3px;height:13px}.champion-signal i{width:2px;height:100%;border-radius:3px;background:var(--accent);transform-origin:bottom;animation:signal-wave 1.8s ease-in-out infinite}.champion-signal i:nth-child(2n){animation-delay:-.8s}.champion-signal i:nth-child(3n){animation-delay:-1.2s}
+.ribbon-house{position:relative;overflow:hidden;transition:transform .35s,border-color .35s,box-shadow .35s}.ribbon-house:hover{transform:translateY(-7px);box-shadow:0 14px 35px color-mix(in srgb,var(--house) 12%,transparent)}
+.ribbon-house:first-child:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 20%,color-mix(in srgb,var(--house) 10%,transparent),transparent 80%);transform:translateX(-120%);animation:leader-sweep 7s ease-in-out infinite}
+.house-card{transition:transform .4s ease,box-shadow .4s,border-color .4s}.house-card:hover{transform:translateY(-9px) rotate(-.6deg);box-shadow:0 20px 45px #0005}.house-card:nth-child(even):hover{transform:translateY(-9px) rotate(.6deg)}
+.house-card .house-emblem{transition:transform .5s cubic-bezier(.2,.8,.2,1)}.house-card:hover .house-emblem{transform:translateY(-6px) scale(1.08)}
+.latest-card,.event-card,.result-card{transition:transform .35s,border-color .35s,box-shadow .35s}.latest-card:hover,.event-card:hover,.result-card:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 35%,transparent);box-shadow:0 20px 40px #0004}
+.podium-house:first-child .house-crest{animation:champion-float 5s ease-in-out infinite}.bar-track>span{position:relative;overflow:hidden;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}.bar-track>span:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffff70,transparent);animation:leader-sweep 5s ease-in-out infinite}
+.button svg,.hero-secondary svg,.section-link svg{transition:transform .25s}.button:hover svg,.hero-secondary:hover svg,.section-link:hover svg{transform:translate(3px,-2px)}
+.page-hero,.editor-top{animation:page-arrive .65s cubic-bezier(.2,.8,.2,1) both}.header{transition:box-shadow .3s,background .3s}
+@keyframes arena-orbit{to{transform:rotate(360deg)}}
+@keyframes title-glint{0%,65%,100%{background-position:100% 50%}85%{background-position:0% 50%}}
+@keyframes signal-wave{0%,100%{transform:scaleY(.3);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+@keyframes leader-sweep{0%,65%{transform:translateX(-120%)}95%,100%{transform:translateX(120%)}}
+@keyframes champion-float{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes page-arrive{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+html[data-motion=paused] *,html[data-motion=paused] *:before,html[data-motion=paused] *:after{animation:none!important;scroll-behavior:auto!important;transition-duration:0s!important}
+html[data-motion=paused] [data-reveal]{opacity:1!important;transform:none!important}
+@media(max-width:680px){.arena-orbits{width:550px;height:550px;right:-310px;top:-90px;opacity:.18}.motion-toggle{right:12px;bottom:12px;padding:10px}.motion-toggle span{display:none}.champion-signal{right:18px;top:18px}}
+@media(prefers-reduced-motion:reduce){.arena-particles,.arena-orbits,.champion-signal{display:none}.hero h1 em{background:none;color:var(--accent)}*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.motion-toggle{display:none}}
