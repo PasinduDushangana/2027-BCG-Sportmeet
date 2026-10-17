@@ -1,6 +1,6 @@
 # BCG Sports Meet 2027
 
-A responsive, multi-page sports meet score website for Bandaranayake College, Gampaha.
+A responsive, multi-page sports meet score website for Bandaranayake College, Gampaha. The design uses a charcoal and championship-gold palette, condensed athletic typography, individual house crests, and a photographic hero. The hero is generated sports imagery, not an official college photograph.
 
 ## Run locally
 

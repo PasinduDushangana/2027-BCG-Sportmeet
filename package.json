@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/PasinduDushangana/2027-BCG-Sportmeet#readme",
   "dependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
     "lucide-react": "^1.58.0",
