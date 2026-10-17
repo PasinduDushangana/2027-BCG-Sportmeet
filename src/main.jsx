@@ -13,6 +13,7 @@ import "@fontsource/barlow-condensed/latin-700.css";
 import "@fontsource/barlow-condensed/latin-800.css";
 import "./styles.css";
 import "./neon.css";
+import "./refinements.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

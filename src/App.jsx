@@ -32,7 +32,6 @@ import {
   Medal,
   Plus,
   Search,
-  Shield,
   Sparkles,
   Target,
   Trash2,
@@ -45,11 +44,12 @@ import {
   getHouse,
   getStandings,
   houses,
-  initialAdjustments,
-  initialEvents,
 } from "./data";
 
 import { AnimatedScore, MotionEffects } from "./visuals";
+import ScorePublisher from "./ScorePublisher";
+import useScoreboard from "./useScoreboard";
+import { INITIAL_REVISION } from "./score-service";
 
 const STORE_KEY = "bcg-sportmeet-2027-v1";
 const cleanResult = (result) => ({
@@ -63,11 +63,11 @@ const cleanResult = (result) => ({
 function loadData() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORE_KEY));
-    if (saved && Array.isArray(saved.events) && saved.adjustments) return saved;
+    if (saved && Array.isArray(saved.events) && saved.adjustments) return {...saved,baseRevision:saved.baseRevision || INITIAL_REVISION};
   } catch {
     /* use sample data */
   }
-  return { events: initialEvents, adjustments: initialAdjustments };
+  return null;
 }
 function parseCSV(text) {
   const rows = [];
@@ -316,7 +316,7 @@ function Status({ value }) {
   );
 }
 
-function Home({ events, standings }) {
+function Home({ events, standings, isSample }) {
   const completed = events.filter((e) => e.status === "Completed");
   const next = events.find((e) => e.status !== "Completed");
   const leader = standings[0];
@@ -442,7 +442,7 @@ function Home({ events, standings }) {
             <div className="standings-panel">
               <div className="panel-top">
                 <span>HOUSE STANDINGS</span>
-                <span className="demo-badge">DEMO SCORES</span>
+                <span className="demo-badge">{isSample ? "DEMO SCORES" : "PUBLISHED SCORES"}</span>
               </div>
               {standings.map((standing, i) => (
                 <PointsBar
@@ -637,8 +637,7 @@ function Home({ events, standings }) {
         </div>
       </section>
       <div className="sample-note container">
-        <span className="demo-badge">DEMO SCORES</span> Sample results are shown
-        for this preview.
+        <span className="demo-badge">{isSample ? "DEMO SCORES" : "PUBLISHED SCORES"}</span> {isSample ? "Sample results are shown until the first scores are published." : "One shared scoreboard. Updates appear automatically for everyone."}
       </div>
     </>
   );
@@ -691,7 +690,7 @@ function Podium({ standings }) {
     </div>
   );
 }
-function Standings({ events, standings }) {
+function Standings({ events, standings, isSample }) {
   const max = standings[0]?.points || 1;
   return (
     <>
@@ -706,8 +705,7 @@ function Standings({ events, standings }) {
         icon={Trophy}
       />
       <div className="sample-note container">
-        Preview standings use sample data. Editor changes are saved in this
-        browser.
+        {isSample ? "Sample standings — official scores will appear when published." : "Published house standings. New scores appear automatically."}
       </div>
       <section className="section">
         <div className="container">
@@ -926,7 +924,7 @@ function Events({ events }) {
     </>
   );
 }
-function Results({ events }) {
+function Results({ events, isSample }) {
   const [params, setParams] = useSearchParams();
   const selected = params.get("event");
   const [filter, setFilter] = useState("All");
@@ -956,7 +954,7 @@ function Results({ events }) {
                 Results & <em>finishes.</em>
               </>
             }
-            description="Sample results shown until the editor updates this meet."
+            description={isSample ? "Sample results shown until the first scores are published." : "The latest published results, shared with every visitor."}
           />
           <div className="filter-row">
             <div className="filter-tabs">
@@ -1037,7 +1035,7 @@ function Results({ events }) {
   );
 }
 
-function Editor({ events, setEvents, adjustments, setAdjustments, onLock }) {
+function Editor({ events, setEvents, adjustments, setAdjustments, onLock, publishing }) {
   const [tab, setTab] = useState("events");
   const [selectedId, setSelectedId] = useState(events[0]?.id);
   const [message, setMessage] = useState("");
@@ -1049,7 +1047,7 @@ function Editor({ events, setEvents, adjustments, setAdjustments, onLock }) {
         item.id === selected.id ? { ...item, ...patch } : item,
       ),
     );
-    setMessage("Changes saved in this browser.");
+    setMessage("Draft saved. Publish when you are ready to share these changes.");
   }
   function updateResult(index, patch) {
     updateEvent({
@@ -1214,8 +1212,7 @@ function Editor({ events, setEvents, adjustments, setAdjustments, onLock }) {
               Meet control <em>centre.</em>
             </h1>
             <p>
-              Manage events, results, and house totals. Changes appear across
-              the site immediately.
+              Manage your draft, preview the standings, then publish scores for everyone.
             </p>
           </div>
           <button className="editor-lock" onClick={onLock}>
@@ -1224,14 +1221,7 @@ function Editor({ events, setEvents, adjustments, setAdjustments, onLock }) {
         </div>
       </div>
       <div className="container editor-body">
-        <div className="editor-warning">
-          <Shield size={18} />
-          <span>
-            Editor access is a browser shortcut, not secure authentication. Data
-            is stored only in this browser and is not shared with other
-            visitors.
-          </span>
-        </div>
+        <ScorePublisher {...publishing} />
         <div className="editor-tabs">
           <button
             className={tab === "events" ? "active" : ""}
@@ -1495,7 +1485,7 @@ function Editor({ events, setEvents, adjustments, setAdjustments, onLock }) {
                           ...a,
                           [h.id]: Number(e.target.value) || 0,
                         }));
-                        setMessage("House points saved in this browser.");
+                        setMessage("House points saved to your private draft.");
                       }}
                     />
                   </label>
@@ -1567,91 +1557,50 @@ function Editor({ events, setEvents, adjustments, setAdjustments, onLock }) {
 
 export default function App() {
   const location = useLocation();
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [location.pathname]);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, [location.pathname]);
   const navigate = useNavigate();
-  const [data, setData] = useState(loadData);
-  const [unlocked, setUnlocked] = useState(
-    () => sessionStorage.getItem("bcg-editor-unlocked") === "yes",
-  );
-  const events = data.events;
-  const adjustments = data.adjustments;
-  const standings = useMemo(
-    () => getStandings(events, adjustments),
-    [events, adjustments],
-  );
-  function updateData(updater) {
-    setData((current) => {
-      const next = typeof updater === "function" ? updater(current) : updater;
-      localStorage.setItem(STORE_KEY, JSON.stringify(next));
-      return next;
+  const {published,syncError,loading,refresh} = useScoreboard();
+  const [draft,setDraft] = useState(loadData);
+  const [unlocked,setUnlocked] = useState(() => sessionStorage.getItem("bcg-editor-unlocked") === "yes");
+  const editorOpen = location.pathname === '/editor' && unlocked;
+  const activeDraft = draft || {...published,baseRevision:published.revision};
+  const data = editorOpen ? activeDraft : published;
+  const {events,adjustments} = data;
+  const standings=useMemo(()=>getStandings(events,adjustments),[events,adjustments]);
+  function saveDraft(next) {
+    localStorage.setItem(STORE_KEY,JSON.stringify(next));
+    setDraft(next);
+  }
+  function updateDraft(updater) {
+    setDraft(current=>{
+      const next=updater(current || {...published,baseRevision:published.revision});
+      localStorage.setItem(STORE_KEY,JSON.stringify(next));return next;
     });
   }
-  const setEvents = (updater) =>
-    updateData((current) => ({
-      ...current,
-      events: typeof updater === "function" ? updater(current.events) : updater,
-    }));
-  const setAdjustments = (updater) =>
-    updateData((current) => ({
-      ...current,
-      adjustments:
-        typeof updater === "function" ? updater(current.adjustments) : updater,
-    }));
+  const setEvents=updater=>updateDraft(current=>({...current,events:typeof updater==='function'?updater(current.events):updater}));
+  const setAdjustments=updater=>updateDraft(current=>({...current,adjustments:typeof updater==='function'?updater(current.adjustments):updater}));
   function search(value) {
-    const query = value.trim();
-    if (query === "1234") {
-      sessionStorage.setItem("bcg-editor-unlocked", "yes");
-      setUnlocked(true);
-      navigate("/editor");
-    } else if (query) navigate(`/events?q=${encodeURIComponent(query)}`);
+    const query=value.trim();
+    if(query==='1234') {
+      sessionStorage.setItem('bcg-editor-unlocked','yes');setUnlocked(true);navigate('/editor');
+    } else if(query)navigate(`/events?q=${encodeURIComponent(query)}`);
   }
-  function lock() {
-    sessionStorage.removeItem("bcg-editor-unlocked");
-    setUnlocked(false);
-    navigate("/");
-  }
-  return (
-    <div
-      className="app neon-theme"
-      data-leading-house={standings[0].id}
-      style={{ "--accent": standings[0].neon }}
-    >
-      <MotionEffects />
-      <Header onSearch={search} leader={standings[0]} />
-      <main>
-        <Routes>
-          <Route
-            path="/"
-            element={<Home events={events} standings={standings} />}
-          />
-          <Route
-            path="/standings"
-            element={<Standings events={events} standings={standings} />}
-          />
-          <Route path="/events" element={<Events events={events} />} />
-          <Route path="/results" element={<Results events={events} />} />
-          <Route
-            path="/editor"
-            element={
-              unlocked ? (
-                <Editor
-                  events={events}
-                  setEvents={setEvents}
-                  adjustments={adjustments}
-                  setAdjustments={setAdjustments}
-                  onLock={lock}
-                />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
-  );
+  function lock(){sessionStorage.removeItem('bcg-editor-unlocked');setUnlocked(false);navigate('/')}
+  const publishing={
+    draft:activeDraft,published,syncError,onRefresh:refresh,
+    onPublished:document=>updateDraft(current=>({...current,baseRevision:document.revision})),
+    onLoadPublished:async()=>{const latest=await refresh();if(latest)saveDraft({...latest,baseRevision:latest.revision})},
+  };
+  return <div className="app neon-theme" data-leading-house={standings[0].id} style={{'--accent':standings[0].neon}}>
+    <MotionEffects/><Header onSearch={search} leader={standings[0]}/>
+    {!editorOpen&&<div className="public-sync container"><span><i className={syncError?'sync-dot offline':'sync-dot'}/>{loading?'CONNECTING TO THE SCOREBOARD':syncError?'OFFLINE · LAST AVAILABLE SCORES':published.isSample?'PREVIEW SCOREBOARD':'SHARED SCOREBOARD'}</span><span>{published.publishedAt?`Updated ${new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Colombo'}).format(new Date(published.publishedAt))} · Sri Lanka time`:'New scores appear here after publishing'}{syncError&&<button onClick={refresh}>Refresh</button>}</span></div>}
+    <main><Routes>
+      <Route path="/" element={<Home events={events} standings={standings} isSample={published.isSample}/>}/>
+      <Route path="/standings" element={<Standings events={events} standings={standings} isSample={published.isSample}/>}/>
+      <Route path="/events" element={<Events events={events}/>}/>
+      <Route path="/results" element={<Results events={events} isSample={published.isSample}/>}/>
+      <Route path="/editor" element={unlocked?<Editor events={events} setEvents={setEvents} adjustments={adjustments} setAdjustments={setAdjustments} onLock={lock} publishing={publishing}/>:<Navigate to="/" replace/>}/>
+      <Route path="*" element={<Navigate to="/" replace/>}/>
+    </Routes></main><Footer/>
+  </div>;
 }

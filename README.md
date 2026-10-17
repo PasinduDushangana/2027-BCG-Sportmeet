@@ -19,4 +19,17 @@ Type `1234` in the header search box and submit to open the editor. Other search
 
 CSV columns: `event,category,division,time,status,house,athlete,place,points`. House is one of `Parakrama`, `Gemunu`, `Thissa`, or `Vijaya`. A matching event and division is updated on import.
 
-The included scores and athlete names are **sample data**. Editor changes are saved to this browser's local storage. The search code is a convenience gate, not secure authentication. Shared, official results require a backend with authentication and a database before publishing for live scoring.
+## Publish shared scores
+
+The included scores and athlete names are **sample data** until an authorised editor publishes official results. Public pages read the shared `public/scores.json` file from this repository and refresh every 20 seconds while visible. If GitHub's raw feed is unavailable, the site falls back to the deployed file and then the last cached scoreboard. GitHub caching and deployment can delay updates.
+
+1. Open the editor with `1234`, then edit events, results, or house points. Changes are private drafts saved only in your browser.
+2. Select **Publish scores**.
+3. Create a GitHub fine-grained personal access token for **PasinduDushangana/2027-BCG-Sportmeet**, granting **Contents: Read and write**. Your GitHub account must have write access to the repository; repository policies may require approval.
+4. Enter that token in the website's password field and select **Publish for everyone**. The editor confirms when it reads the new public revision.
+
+The token is sent only to GitHub, held in memory, and cleared on successful publication or closing the form. Never commit tokens or put them in score files. The `1234` shortcut only reveals the editor; GitHub authorises publication.
+
+Publishing commits the score file to `main`, triggering the existing Pages workflow. Revision and file SHA checks prevent overwriting another editor's newer publication. If a conflict occurs, back up your draft, load published scores, and reapply your changes. Public pages always use published scores, including when viewed from the editor's browser.
+
+All primary surfaces have rounded corners, with responsive layouts, house-colour neon accents, and reduced-motion support.
